@@ -19,7 +19,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     Does very Windows-firewall-y stuff
   EOT
 
-  def initialize
+  def initialize(value={})
     super(value)
     @property_flush = {}
   end
@@ -68,6 +68,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
       args << '-DefaultOutboundAction' << @property_flush[:default_outbound_action] if @property_flush[:default_outbound_action]
       args << '-NotifyOnListen' << @property_flush[:notify_on_listen] if @property_flush[:notify_on_listen]
     end
+    Puppet.debug "Ready to flush values with: with command: `#{args}`"
     powershell args unless args.empty?
   end
 end
