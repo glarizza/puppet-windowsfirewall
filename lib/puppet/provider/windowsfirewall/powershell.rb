@@ -25,9 +25,8 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def exists?
-    #enabled = powershell 'Get-NetFirewallProfile -profile "domain").Enabled'
-    #enabled == 'True' ? true : false
-    true
+    enabled = powershell 'Get-NetFirewallProfile -profile "domain").Enabled'
+    enabled.delete("\n").strip == 'True' ? true : false
   end
 
   def create
