@@ -51,7 +51,11 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def default_outbound_action
-    powershell "(Get-NetFirewallProfile -profile \"domain\").DefaultOutboundAction".delete("\n").strip
+    value = powershell "(Get-NetFirewallProfile -profile \"domain\").DefaultOutboundAction"
+    Puppet.debug "Value untouched: ---#{value}---"
+    value = value.delete("\n").strip
+    Puppet.debug "Value after strip and delete: ---#{value}---"
+    value
   end
 
   def default_outbound_action=(value)
