@@ -24,6 +24,23 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     @property_flush = {}
   end
 
+  def method_map
+    {
+      'default_inbound_action' => {
+        'cmd'      => "(Get-NetFirewallProfile -profile \"domain\").DefaultInboundAction",
+        'property' => 'DefaultInboundAction'
+      },
+      'default_outbound_action' => {
+        'cmd'      => "(Get-NetFirewallProfile -profile \"domain\").DefaultOutboundAction",
+        'property' => 'DefaultOutboundAction'
+      },
+      'notify_on_listen' => {
+        'cmd'      => "(Get-NetFirewallProfile -profile \"domain\").NotifyOnListen",
+        'property' => 'NotifyOnListen'
+      }
+    }
+  end
+
   def exists?
     enabled = powershell '(Get-NetFirewallProfile -profile "domain").Enabled'
     enabled.delete("\n").strip == 'True' ? true : false
@@ -37,30 +54,16 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     Puppet.debug "Destroy the thing here"
   end
 
-  def default_inbound_action
-    value = powershell "(Get-NetFirewallProfile -profile \"domain\").DefaultInboundAction"
-    value.delete("\n").strip
-  end
+  # Dynamically create methods from the method_map above
+  method_map.keys.each do |key|
+    define_method(key) do
+      value = powershell method_map[key]['cmd']
+      value.delete("\n").strip
+    end
 
-  def default_inbound_action=(value)
-    @property_flush[:default_inbound_action] = value
-  end
-
-  def default_outbound_action
-    value = powershell "(Get-NetFirewallProfile -profile \"domain\").DefaultOutboundAction"
-    value.delete("\n").strip
-  end
-
-  def default_outbound_action=(value)
-    @property_flush[:default_outbound_action] = value
-  end
-
-  def notify_on_listen
-    powershell "(Get-NetFirewallProfile -profile \"domain\").NotifyOnListen".delete("\n").strip
-  end
-
-  def notify_on_listen=(value)
-    @property_flush[:notify_on_listen] = value
+    define_method("#{key}=") do |value|
+      @property_flush[key.intern] = value
+    end
   end
 
   def flush
