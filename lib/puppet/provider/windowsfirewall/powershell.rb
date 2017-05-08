@@ -39,7 +39,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def default_inbound_action
-    powershell "(Get-NetFirewallProfile -profile \"domain\").DefaultInboundAction".delete("\n")
+    powershell "(Get-NetFirewallProfile -profile \"domain\").DefaultInboundAction".delete("\n").strip
   end
 
   def default_inbound_action=(value)
@@ -47,7 +47,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def default_outbound_action
-    powershell "(Get-NetFirewallProfile -profile \"domain\").DefaultOutboundAction".delete("\n")
+    powershell "(Get-NetFirewallProfile -profile \"domain\").DefaultOutboundAction".delete("\n").strip
   end
 
   def default_outbound_action=(value)
@@ -55,7 +55,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def notify_on_listen
-    powershell "(Get-NetFirewallProfile -profile \"domain\").NotifyOnListen".delete("\n")
+    powershell "(Get-NetFirewallProfile -profile \"domain\").NotifyOnListen".delete("\n").strip
   end
 
   def notify_on_listen=(value)
