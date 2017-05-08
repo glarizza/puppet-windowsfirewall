@@ -4,12 +4,6 @@ Puppet::Type.newtype(:windowsfirewall) do
 
   newparam(:name, :namevar => true) do
     desc "Windows proxy zones"
-    #munge do |value|
-    #  value.downcase
-    #end
-    #def insync?(is)
-    #  is.downcase == should.downcase
-    #end
   end
 
   newproperty(:default_inbound_action) do
