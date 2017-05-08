@@ -25,7 +25,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def exists?
-    enabled = powershell 'Get-NetFirewallProfile -profile "domain").Enabled'
+    enabled = powershell '(Get-NetFirewallProfile -profile "domain").Enabled'
     exists_value = enabled.delete("\n").strip == 'True' ? true : false
     Puppet.debug "Exists? is reporting this value: --#{exists_value}--"
   end
