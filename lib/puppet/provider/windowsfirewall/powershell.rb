@@ -58,21 +58,15 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def self.prefetch(resources)
-    sites = instances
-    resources.keys.each do |site|
-      if provider = sites.find { |s| s.name.downcase == site.downcase }
-        Puppet.debug "-----FOUND IT------"
-        resources[site].provider = provider
+    Puppet.debug "-----Inside Prefetch----"
+    instances.each do |prov|
+      Puppet.debug "Second prefetch, prov: #{prov.name}"
+      Puppet.debug "What's the resource: #{resources[prov.name]}"
+      if resource = resources[prov.name]
+        Puppet.debug "Inside prefetch, resource.provider: #{resource.provider}, prov: #{prov.name}"
+        resource.provider = prov
       end
     end
-    #Puppet.debug "-----Inside Prefetch----"
-    #instances.each do |prov|
-    #  Puppet.debug "Second prefetch, prov: #{prov.name}"
-    #  if resource = resources[prov.name]
-    #    Puppet.debug "Inside prefetch, resource.provider: #{resource.provider}, prov: #{prov.name}"
-    #    resource.provider = prov
-    #  end
-    #end
   end
 
   def self.get_firewall_properties(zone)
