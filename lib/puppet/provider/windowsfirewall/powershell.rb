@@ -57,6 +57,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def prefetch(resources)
+    Puppet.debug "-----WE ARE INSIDE PREFETCH------"
     instances.each do |prov|
       if resource = resources[prov.name]
         resource.provider = prov
