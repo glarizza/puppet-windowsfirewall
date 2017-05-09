@@ -24,36 +24,34 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     @property_flush = {}
   end
 
-  def method_map
-    {
-      'default_inbound_action' => {
-        'cmd'      => "(Get-NetFirewallProfile -profile \"#{resource[:name]}\").DefaultInboundAction",
-        'property' => 'DefaultInboundAction'
-      },
-      'default_outbound_action' => {
-        'cmd'      => "(Get-NetFirewallProfile -profile \"#{resource[:name]}\").DefaultOutboundAction",
-        'property' => 'DefaultOutboundAction'
-      },
-      'notify_on_listen' => {
-        'cmd'      => "(Get-NetFirewallProfile -profile \"#{resource[:name]}\").NotifyOnListen",
-        'property' => 'NotifyOnListen'
-      }
+  @method_map = {
+    'default_inbound_action' => {
+      'cmd'      => "(Get-NetFirewallProfile -profile \"#{resource[:name]}\").DefaultInboundAction",
+      'property' => 'DefaultInboundAction'
+    },
+    'default_outbound_action' => {
+      'cmd'      => "(Get-NetFirewallProfile -profile \"#{resource[:name]}\").DefaultOutboundAction",
+      'property' => 'DefaultOutboundAction'
+    },
+    'notify_on_listen' => {
+      'cmd'      => "(Get-NetFirewallProfile -profile \"#{resource[:name]}\").NotifyOnListen",
+      'property' => 'NotifyOnListen'
     }
+  }
+
+  # Dynamically create methods from the method_map above
+  @method_map.keys.each do |key|
+    define_method(key) do
+      value = powershell @method_map[key]['cmd']
+      value.delete("\n").strip
+    end
+
+    define_method("#{key}=") do |value|
+      @property_flush[key.intern] = value
+    end
   end
 
   def exists?
-    # Dynamically create methods from the method_map above
-    method_map.keys.each do |key|
-      define_method(key) do
-        value = powershell method_map[key]['cmd']
-        value.delete("\n").strip
-      end
-
-      define_method("#{key}=") do |value|
-        @property_flush[key.intern] = value
-      end
-    end
-
     enabled = powershell "(Get-NetFirewallProfile -profile \"#{resource[:name]}\").Enabled"
     enabled.delete("\n").strip == 'True' ? true : false
   end
