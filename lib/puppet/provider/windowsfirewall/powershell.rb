@@ -58,9 +58,11 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def self.prefetch(resources)
+    Puppet.debug "-----Inside Prefetch----"
     instances.each do |prov|
+      Puppet.debug "Second prefetch, prov: #{prov}, resource: #{resource}"
       if resource = resources[prov.name]
-        Puppet.debug "Inside fetch, resource.provider: #{resource.provider}, prov: #{prov}"
+        Puppet.debug "Inside prefetch, resource.provider: #{resource.provider}, prov: #{prov}"
         resource.provider = prov
       end
     end
@@ -99,13 +101,11 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   #end
 
   def exists?
-    Puppet.debug "Inside exists? and property hash is: #{@property_hash}"
     enabled = powershell("(Get-NetFirewallProfile -profile \"#{resource[:name]}\").Enabled")
     enabled.delete("\n").strip == 'True'
   end
 
   def create
-    Puppet.debug "Inside create and property hash is: #{@property_hash}"
     args = []
     args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
     args << "-#{method_map['default_inbound_action']}" << "\"#{resource[:default_inbound_action]}\"" if resource[:default_inbound_action]
@@ -135,8 +135,6 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
 
   def flush
     args = []
-    Puppet.debug "The value of @property_flush is: #{@property_flush}"
-    Puppet.debug "The value of @property_hash is: #{@property_hash}"
     unless @property_flush.empty?
       args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
       args << "-#{method_map['default_inbound_action']}" << "\"#{@property_flush[:default_inbound_action]}\"" if @property_flush[:default_inbound_action]
