@@ -42,7 +42,10 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   # Dynamically create methods from the method_map above
   @method_map.keys.each do |key|
     define_method(key) do
-      value = powershell @method_map[key]['cmd']
+      args = []
+      args << '(Get-NetFirewallProfile' << '-profile' << "\"#{resource[:name]}\").#{@method_map[key]['property']}"
+      Puppet.debug "#{key}: Executing #{powershell} #{args}"
+      value = powershell args
       value.delete("\n").strip
     end
 
