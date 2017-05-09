@@ -64,7 +64,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   # Dynamically create methods from the method_map above
-  method_map.keys.each do |key|
+  self.class.method_map.keys.each do |key|
     define_method(key) do
       value = powershell method_map[key]['cmd']
       value.delete("\n").strip
