@@ -85,6 +85,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   # Dynamically create methods from the method_map above
   method_map.each do |key,val|
     define_method(key) do
+      Puppet.debug "Property hash: #{@property_hash}"
       @property_hash[key.intern]
     end
 
