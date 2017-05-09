@@ -54,6 +54,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     end
 
     define_method("#{key}=") do |value|
+      Puppet.debug "Setting @property_flush[#{key.intern}] to #{value}..."
       @property_flush[key.intern] = value
     end
   end
