@@ -51,8 +51,10 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   def self.instances
     array_of_instances = ['domain', 'private', 'public'].collect do |zone|
       instance_properties = get_firewall_properties(zone)
+      Puppet.debug "About to create an instance with: #{instance_properties}"
       new(instance_properties)
     end
+    Puppet.debug "Now all the instances: #{array_of_instances}"
     array_of_instances
   end
 
