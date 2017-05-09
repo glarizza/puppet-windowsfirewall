@@ -98,6 +98,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def exists?
+    Puppet.debug "We are in exists? and the property hash is: #{@property_hash}"
     @property_hash[:ensure] == 'True' ? true : false
   end
 
