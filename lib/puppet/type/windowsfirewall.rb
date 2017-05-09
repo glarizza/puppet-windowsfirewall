@@ -3,7 +3,8 @@ Puppet::Type.newtype(:windowsfirewall) do
   ensurable
 
   newparam(:name, :namevar => true) do
-    desc "Windows proxy zones"
+    newvalues(:domain, :public, :private)
+    desc "Windows firewall zones - either 'domain', 'public', or 'private'"
   end
 
   newproperty(:default_inbound_action) do

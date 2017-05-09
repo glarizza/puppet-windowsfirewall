@@ -27,31 +27,40 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   def method_map
     {
       'default_inbound_action' => {
-        'cmd'      => "(Get-NetFirewallProfile -profile \"domain\").DefaultInboundAction",
+        'cmd'      => "(Get-NetFirewallProfile -profile \"#{resource[:name]}\").DefaultInboundAction",
         'property' => 'DefaultInboundAction'
       },
       'default_outbound_action' => {
-        'cmd'      => "(Get-NetFirewallProfile -profile \"domain\").DefaultOutboundAction",
+        'cmd'      => "(Get-NetFirewallProfile -profile \"#{resource[:name]}\").DefaultOutboundAction",
         'property' => 'DefaultOutboundAction'
       },
       'notify_on_listen' => {
-        'cmd'      => "(Get-NetFirewallProfile -profile \"domain\").NotifyOnListen",
+        'cmd'      => "(Get-NetFirewallProfile -profile \"#{resource[:name]}\").NotifyOnListen",
         'property' => 'NotifyOnListen'
       }
     }
   end
 
   def exists?
-    enabled = powershell '(Get-NetFirewallProfile -profile "domain").Enabled'
+    enabled = powershell "(Get-NetFirewallProfile -profile \"#{resource[:name]}\").Enabled"
     enabled.delete("\n").strip == 'True' ? true : false
   end
 
   def create
-    Puppet.debug "Create the thing here"
+    args = []
+    args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
+    args << '-DefaultInboundAction' << "\"#{resource[:default_inbound_action]}\"" if resource[:default_inbound_action]
+    args << '-DefaultOutboundAction' << "\"#{resource[:default_outbound_action]}\"" if resource[:default_outbound_action]
+    args << '-NotifyOnListen' << "\"#{resource[:notify_on_listen]}\"" if resource[:notify_on_listen]
+    Puppet.debug "Ready to CREATE resource with: with command: `#{powershell} #{args}`"
+    powershell args unless args.empty?
   end
 
   def destroy
-    Puppet.debug "Destroy the thing here"
+    args = []
+    args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'False'
+    Puppet.debug "Ready to delete resource with: with command: `#{powershell} #{args}`"
+    powershell args
   end
 
   # Dynamically create methods from the method_map above
@@ -69,7 +78,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   def flush
     args = []
     unless @property_flush.empty?
-      args << 'Set-NetFirewallProfile' << '-Profile' << '"domain"'
+      args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
       args << '-DefaultInboundAction' << @property_flush[:default_inbound_action] if @property_flush[:default_inbound_action]
       args << '-DefaultOutboundAction' << @property_flush[:default_outbound_action] if @property_flush[:default_outbound_action]
       args << '-NotifyOnListen' << @property_flush[:notify_on_listen] if @property_flush[:notify_on_listen]
