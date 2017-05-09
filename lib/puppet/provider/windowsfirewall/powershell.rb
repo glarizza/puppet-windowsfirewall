@@ -44,6 +44,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
       args << '(Get-NetFirewallProfile' << '-profile' << "\"#{resource[:name]}\").#{val['property']}"
       Puppet.debug "#{key}: Executing #{powershell} #{args}"
       value = powershell(args)
+      Puppet.debug "Found value of: #{value}"
       value.delete("\n").strip
     end
 
@@ -64,14 +65,14 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     args << '-DefaultOutboundAction' << "\"#{resource[:default_outbound_action]}\"" if resource[:default_outbound_action]
     args << '-NotifyOnListen' << "\"#{resource[:notify_on_listen]}\"" if resource[:notify_on_listen]
     Puppet.debug "Ready to CREATE resource with: with command: `powershell.exe #{args}`"
-    powershell args unless args.empty?
+    powershell(args) unless args.empty?
   end
 
   def destroy
     args = []
     args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'False'
     Puppet.debug "Ready to delete resource with: with command: `#{powershell} #{args}`"
-    powershell args
+    powershell(args)
   end
 
   def flush
@@ -83,7 +84,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
       args << '-NotifyOnListen' << @property_flush[:notify_on_listen] if @property_flush[:notify_on_listen]
     end
     Puppet.debug "Ready to flush values with: with command: `#{args}`"
-    powershell args unless args.empty?
+    powershell(args) unless args.empty?
   end
 end
 
