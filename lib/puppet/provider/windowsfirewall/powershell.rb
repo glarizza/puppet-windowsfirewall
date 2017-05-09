@@ -65,6 +65,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def create
+    Puppet.debug "The value of @method_map is: #{@method_map}"
     args = []
     args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
     args << "-#{@method_map['default_inbound_action']}" << "\"#{resource[:default_inbound_action]}\"" if resource[:default_inbound_action]
