@@ -45,6 +45,36 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     }
   end
 
+  def self.instances
+    array_of_instances = ['domain', 'private', 'public'].collect do |zone|
+      instance_properties = get_firewall_properties(zone)
+      new(instance_properties)
+    end
+    array_of_instances
+  end
+
+  def self.prefetch(resources)
+    instances.each do |prov|
+      if resource = resources[prov.name]
+        resource.provider = prov
+      end
+    end
+  end
+
+  def self.get_firewall_properties(zone)
+    output = powershell(['Get-NetFirewallProfile', 'profile', "\"#{zone}\""]).readlines
+    3.times { output.shift }
+    hash_of_properties = {}
+    output.each do | line|
+      key, val = line.split(':')
+      property_name = method_map.key(key.strip)
+      Puppet.debug "The property name found was: #{property_name}"
+      hash_of_properties[property_name] = val.strip.chomp
+    end
+    Puppet.debug "The hash for this zone is: #{hash_of_properties}"
+    hash_of_properties
+  end
+
   def method_map
     self.class.method_map
   end
