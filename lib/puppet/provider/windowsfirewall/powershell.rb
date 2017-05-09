@@ -62,7 +62,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def self.get_firewall_properties(zone)
-    output = powershell(['Get-NetFirewallProfile', '-profile', "\"#{zone}\""]).readlines
+    output = powershell(['Get-NetFirewallProfile', '-profile', "\"#{zone}\""]).split("\n")
     3.times { output.shift }
     hash_of_properties = {}
     output.each do | line|
