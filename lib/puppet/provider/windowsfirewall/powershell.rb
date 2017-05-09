@@ -19,8 +19,6 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     Does very Windows-firewall-y stuff
   EOT
 
-  mk_resource_methods
-
   def initialize(value={})
     super(value)
     @property_flush = {}
@@ -51,10 +49,8 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   def self.instances
     array_of_instances = ['domain', 'private', 'public'].collect do |zone|
       instance_properties = get_firewall_properties(zone)
-      Puppet.debug "About to create an instance with: #{instance_properties}"
       new(instance_properties)
     end
-    Puppet.debug "Now all the instances: #{array_of_instances}"
     array_of_instances
   end
 
@@ -89,9 +85,10 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
 
   # Dynamically create methods from the method_map above
   method_map.each do |key,val|
-    #define_method(key) do
-    #  @property_hash[key.intern]
-    #end
+    define_method(key) do
+      Puppet.debug "Inside getter - property hash is: #{@property_hash}"
+      @property_hash[key.intern]
+    end
 
     define_method("#{key}=") do |value|
       Puppet.debug "Setting @property_flush[#{key.intern}] to #{value}..."
@@ -101,7 +98,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
 
   def exists?
     Puppet.debug "We are in exists? and the property hash is: #{@property_hash}"
-    @property_hash[:ensure] == 'True' ? true : false
+    @property_hash[:ensure] == :present
   end
 
   def create
