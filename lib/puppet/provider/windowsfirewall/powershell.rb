@@ -26,6 +26,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
 
   def self.method_map
     {
+      'ensure'                              => 'Enabled',
       'default_inbound_action'              => 'DefaultInboundAction',
       'default_outbound_action'             => 'DefaultOutboundAction',
       'allow_inbound_rules'                 => 'AllowInboundRules',
@@ -68,9 +69,11 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     output.each do | line|
       key, val = line.split(':')
       property_name = method_map.key(key.strip)
-      Puppet.debug "The property name found was: #{property_name}"
-      hash_of_properties[property_name] = val.strip.chomp
+      hash_of_properties[property_name.intern] = val.strip.chomp
     end
+    hash_of_properties[:name] = zone
+    hash_of_properties[:ensure] = hash_of_properties[:ensure] == 'True' ? :present : :absent
+    hash_of_properties[:provider] = :powershell
     Puppet.debug "The hash for this zone is: #{hash_of_properties}"
     hash_of_properties
   end
