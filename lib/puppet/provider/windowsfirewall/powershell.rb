@@ -42,6 +42,18 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def exists?
+    # Dynamically create methods from the method_map above
+    method_map.keys.each do |key|
+      define_method(key) do
+        value = powershell method_map[key]['cmd']
+        value.delete("\n").strip
+      end
+
+      define_method("#{key}=") do |value|
+        @property_flush[key.intern] = value
+      end
+    end
+
     enabled = powershell "(Get-NetFirewallProfile -profile \"#{resource[:name]}\").Enabled"
     enabled.delete("\n").strip == 'True' ? true : false
   end
@@ -61,21 +73,6 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'False'
     Puppet.debug "Ready to delete resource with: with command: `#{powershell} #{args}`"
     powershell args
-  end
-
-
-  def build_methods
-    # Dynamically create methods from the method_map above
-    method_map.keys.each do |key|
-      define_method(key) do
-        value = powershell method_map[key]['cmd']
-        value.delete("\n").strip
-      end
-
-      define_method("#{key}=") do |value|
-        @property_flush[key.intern] = value
-      end
-    end
   end
 
   def flush
