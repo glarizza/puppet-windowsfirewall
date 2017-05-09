@@ -63,15 +63,18 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     powershell args
   end
 
-  # Dynamically create methods from the method_map above
-  self.class.method_map.keys.each do |key|
-    define_method(key) do
-      value = powershell method_map[key]['cmd']
-      value.delete("\n").strip
-    end
 
-    define_method("#{key}=") do |value|
-      @property_flush[key.intern] = value
+  def build_methods
+    # Dynamically create methods from the method_map above
+    method_map.keys.each do |key|
+      define_method(key) do
+        value = powershell method_map[key]['cmd']
+        value.delete("\n").strip
+      end
+
+      define_method("#{key}=") do |value|
+        @property_flush[key.intern] = value
+      end
     end
   end
 
