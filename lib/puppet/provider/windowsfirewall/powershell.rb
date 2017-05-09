@@ -26,15 +26,12 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
 
   @method_map = {
     'default_inbound_action' => {
-      'cmd'      => "(Get-NetFirewallProfile -profile \"#{resource[:name]}\").DefaultInboundAction",
       'property' => 'DefaultInboundAction'
     },
     'default_outbound_action' => {
-      'cmd'      => "(Get-NetFirewallProfile -profile \"#{resource[:name]}\").DefaultOutboundAction",
       'property' => 'DefaultOutboundAction'
     },
     'notify_on_listen' => {
-      'cmd'      => "(Get-NetFirewallProfile -profile \"#{resource[:name]}\").NotifyOnListen",
       'property' => 'NotifyOnListen'
     }
   }
