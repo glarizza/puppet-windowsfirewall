@@ -84,18 +84,18 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     self.class.method_map
   end
 
-  # Dynamically create methods from the method_map above
-  method_map.each do |key,val|
-    define_method(key) do
-      Puppet.debug "Inside getter - property hash is: #{@property_hash}"
-      @property_hash[key.intern]
-    end
+  ## Dynamically create methods from the method_map above
+  #method_map.each do |key,val|
+  #  define_method(key) do
+  #    Puppet.debug "Inside getter - property hash is: #{@property_hash}"
+  #    @property_hash[key.intern]
+  #  end
 
-    define_method("#{key}=") do |value|
-      Puppet.debug "Setting @property_flush[#{key.intern}] to #{value}..."
-      @property_flush[key.intern] = value
-    end
-  end
+  #  define_method("#{key}=") do |value|
+  #    Puppet.debug "Setting @property_flush[#{key.intern}] to #{value}..."
+  #    @property_flush[key.intern] = value
+  #  end
+  #end
 
   def exists?
     enabled = powershell("(Get-NetFirewallProfile -profile \"#{resource[:name]}\").Enabled")
