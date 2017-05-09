@@ -97,11 +97,14 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   #  end
   #end
 
+  def default_inbound_action
+    Puppet.debug "default_inbound_action: Property hash is #{@property_hash}"
+  end
+
   def exists?
     Puppet.debug "Inside exists? and property hash is: #{@property_hash}"
     enabled = powershell("(Get-NetFirewallProfile -profile \"#{resource[:name]}\").Enabled")
     enabled.delete("\n").strip == 'True'
-    false
   end
 
   def create
