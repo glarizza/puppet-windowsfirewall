@@ -25,22 +25,16 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   @method_map = {
-    'default_inbound_action' => {
-      'property' => 'DefaultInboundAction'
-    },
-    'default_outbound_action' => {
-      'property' => 'DefaultOutboundAction'
-    },
-    'notify_on_listen' => {
-      'property' => 'NotifyOnListen'
-    }
+    'default_inbound_action'  => 'DefaultInboundAction',
+    'default_outbound_action' => 'DefaultOutboundAction',
+    'notify_on_listen'        => 'NotifyOnListen'
   }
 
   # Dynamically create methods from the method_map above
   @method_map.each do |key,val|
     define_method(key) do
       args = []
-      args << '(Get-NetFirewallProfile' << '-profile' << "\"#{resource[:name]}\").#{val['property']}"
+      args << '(Get-NetFirewallProfile' << '-profile' << "\"#{resource[:name]}\").#{val}"
       value = powershell(args)
       Puppet.debug "#{key}: Found value of: #{value}"
       value.delete("\n").strip
