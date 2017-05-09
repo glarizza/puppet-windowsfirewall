@@ -56,7 +56,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     array_of_instances
   end
 
-  def self.prefetch(resources)
+  def prefetch(resources)
     instances.each do |prov|
       if resource = resources[prov.name]
         resource.provider = prov
@@ -87,7 +87,6 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   # Dynamically create methods from the method_map above
   method_map.each do |key,val|
     #define_method(key) do
-    #  Puppet.debug "Property hash: #{@property_hash}"
     #  @property_hash[key.intern]
     #end
 
@@ -103,7 +102,6 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def create
-    Puppet.debug "The value of method_map is: #{method_map}"
     args = []
     args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
     args << "-#{method_map['default_inbound_action']}" << "\"#{resource[:default_inbound_action]}\"" if resource[:default_inbound_action]
@@ -134,7 +132,6 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   def flush
     args = []
     Puppet.debug "The value of @property_flush is: #{@property_flush}"
-    Puppet.debug "The value of method_map is: #{method_map}"
     unless @property_flush.empty?
       args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
       args << "-#{method_map['default_inbound_action']}" << "\"#{@property_flush[:default_inbound_action]}\"" if @property_flush[:default_inbound_action]
