@@ -66,9 +66,22 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   def create
     args = []
     args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
-    args << '-DefaultInboundAction' << "\"#{resource[:default_inbound_action]}\"" if resource[:default_inbound_action]
-    args << '-DefaultOutboundAction' << "\"#{resource[:default_outbound_action]}\"" if resource[:default_outbound_action]
-    args << '-NotifyOnListen' << "\"#{resource[:notify_on_listen]}\"" if resource[:notify_on_listen]
+    args << "-#{@method_map['default_inbound_action']}" << "\"#{resource[:default_inbound_action]}\"" if resource[:default_inbound_action]
+    args << "-#{@method_map['default_outbound_action']}" << "\"#{resource[:default_outbound_action]}\"" if resource[:default_outbound_action]
+    args << "-#{@method_map['allow_inbound_rules']}" << "\"#{resource[:allow_inbound_rules]}\"" if resource[:allow_inbound_rules]
+    args << "-#{@method_map['allow_local_firewall_rules']}" << "\"#{resource[:allow_local_firewall_rules]}\"" if resource[:allow_local_firewall_rules]
+    args << "-#{@method_map['allow_local_ipsec_rules']}" << "\"#{resource[:allow_local_ipsec_rules]}\"" if resource[:allow_local_ipsec_rules]
+    args << "-#{@method_map['allow_user_apps']}" << "\"#{resource[:allow_user_apps]}\"" if resource[:allow_user_apps]
+    args << "-#{@method_map['allow_user_ports']}" << "\"#{resource[:allow_user_ports]}\"" if resource[:allow_user_ports]
+    args << "-#{@method_map['allow_unicast_response_to_multicast']}" << "\"#{resource[:allow_unicast_response_to_multicast]}\"" if resource[:allow_unicast_response_to_multicast]
+    args << "-#{@method_map['notify_on_listen']}" << "\"#{resource[:notify_on_listen]}\"" if resource[:notify_on_listen]
+    args << "-#{@method_map['enable_stealth_mode_for_ipsec']}" << "\"#{resource[:enable_stealth_mode_for_ipsec]}\"" if resource[:enable_stealth_mode_for_ipsec]
+    args << "-#{@method_map['log_file_name']}" << "\"#{resource[:log_file_name]}\"" if resource[:log_file_name]
+    args << "-#{@method_map['log_max_size_kilobytes']}" << "\"#{resource[:log_max_size_kilobytes]}\"" if resource[:log_max_size_kilobytes]
+    args << "-#{@method_map['log_allowed']}" << "\"#{resource[:log_allowed]}\"" if resource[:log_allowed]
+    args << "-#{@method_map['log_blocked']}" << "\"#{resource[:log_blocked]}\"" if resource[:log_blocked]
+    args << "-#{@method_map['log_ignored']}" << "\"#{resource[:log_ignored]}\"" if resource[:log_ignored]
+    args << "-#{@method_map['disabled_interface_aliases']}" << "\"#{resource[:disabled_interface_aliases]}\"" if resource[:disabled_interface_aliases]
     powershell(args) unless args.empty?
   end
 
@@ -82,9 +95,22 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     args = []
     unless @property_flush.empty?
       args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
-      args << '-DefaultInboundAction' << @property_flush[:default_inbound_action] if @property_flush[:default_inbound_action]
-      args << '-DefaultOutboundAction' << @property_flush[:default_outbound_action] if @property_flush[:default_outbound_action]
-      args << '-NotifyOnListen' << @property_flush[:notify_on_listen] if @property_flush[:notify_on_listen]
+      args << "-#{@method_map['default_inbound_action']}" << "\"#{@property_flush[:default_inbound_action]}\"" if @property_flush[:default_inbound_action]
+      args << "-#{@method_map['default_outbound_action']}" << "\"#{@property_flush[:default_outbound_action]}\"" if @property_flush[:default_outbound_action]
+      args << "-#{@method_map['allow_inbound_rules']}" << "\"#{@property_flush[:allow_inbound_rules]}\"" if @property_flush[:allow_inbound_rules]
+      args << "-#{@method_map['allow_local_firewall_rules']}" << "\"#{@property_flush[:allow_local_firewall_rules]}\"" if @property_flush[:allow_local_firewall_rules]
+      args << "-#{@method_map['allow_local_ipsec_rules']}" << "\"#{@property_flush[:allow_local_ipsec_rules]}\"" if @property_flush[:allow_local_ipsec_rules]
+      args << "-#{@method_map['allow_user_apps']}" << "\"#{@property_flush[:allow_user_apps]}\"" if @property_flush[:allow_user_apps]
+      args << "-#{@method_map['allow_user_ports']}" << "\"#{@property_flush[:allow_user_ports]}\"" if @property_flush[:allow_user_ports]
+      args << "-#{@method_map['allow_unicast_response_to_multicast']}" << "\"#{@property_flush[:allow_unicast_response_to_multicast]}\"" if @property_flush[:allow_unicast_response_to_multicast]
+      args << "-#{@method_map['notify_on_listen']}" << "\"#{@property_flush[:notify_on_listen]}\"" if @property_flush[:notify_on_listen]
+      args << "-#{@method_map['enable_stealth_mode_for_ipsec']}" << "\"#{@property_flush[:enable_stealth_mode_for_ipsec]}\"" if @property_flush[:enable_stealth_mode_for_ipsec]
+      args << "-#{@method_map['log_file_name']}" << "\"#{@property_flush[:log_file_name]}\"" if @property_flush[:log_file_name]
+      args << "-#{@method_map['log_max_size_kilobytes']}" << "\"#{@property_flush[:log_max_size_kilobytes]}\"" if @property_flush[:log_max_size_kilobytes]
+      args << "-#{@method_map['log_allowed']}" << "\"#{@property_flush[:log_allowed]}\"" if @property_flush[:log_allowed]
+      args << "-#{@method_map['log_blocked']}" << "\"#{@property_flush[:log_blocked]}\"" if @property_flush[:log_blocked]
+      args << "-#{@method_map['log_ignored']}" << "\"#{@property_flush[:log_ignored]}\"" if @property_flush[:log_ignored]
+      args << "-#{@method_map['disabled_interface_aliases']}" << "\"#{@property_flush[:disabled_interface_aliases]}\"" if @property_flush[:disabled_interface_aliases]
     end
     powershell(args) unless args.empty?
   end
