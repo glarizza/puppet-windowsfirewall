@@ -58,12 +58,8 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def self.prefetch(resources)
-    Puppet.debug "-----Inside Prefetch----"
-    Puppet.debug "What's the Keys: #{resources.keys}"
     instances.each do |prov|
-      Puppet.debug "Second prefetch, prov: #{prov.name}"
       if resource = resources[prov.name.intern]
-        Puppet.debug "--------Inside prefetch - ya made it!!------"
         resource.provider = prov
       end
     end
@@ -81,7 +77,6 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     hash_of_properties[:name] = zone
     hash_of_properties[:ensure] = hash_of_properties[:ensure] == 'True' ? :present : :absent
     hash_of_properties[:provider] = :powershell
-    Puppet.debug "Hash of properties is: #{hash_of_properties}"
     hash_of_properties
   end
 
@@ -103,9 +98,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   #end
 
   def exists?
-    Puppet.debug "the value of property hash is:  #{@property_hash}" 
-    enabled = powershell("(Get-NetFirewallProfile -profile \"#{resource[:name]}\").Enabled")
-    enabled.delete("\n").strip == 'True'
+    @property_hash[:ensure] == :present
   end
 
   def create
