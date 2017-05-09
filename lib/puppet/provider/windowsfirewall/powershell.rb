@@ -98,8 +98,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def exists?
-    enabled = powershell("(Get-NetFirewallProfile -profile \"#{resource[:name]}\").Enabled")
-    enabled.delete("\n").strip == 'True' ? true : false
+    @property_hash[:ensure] == 'True' ? true : false
   end
 
   def create
