@@ -43,7 +43,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
       args = []
       args << '(Get-NetFirewallProfile' << '-profile' << "\"#{resource[:name]}\").#{val['property']}"
       Puppet.debug "#{key}: Executing #{powershell} #{args}"
-      value = powershell args
+      value = powershell(args)
       value.delete("\n").strip
     end
 
