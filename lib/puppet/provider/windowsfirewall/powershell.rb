@@ -60,6 +60,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   def self.prefetch(resources)
     instances.each do |prov|
       if resource = resources[prov.name]
+        Puppet.debug "Inside fetch, resource.provider: #{resource.provider}, prov: #{prov}"
         resource.provider = prov
       end
     end
@@ -96,10 +97,6 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   #    @property_flush[key.intern] = value
   #  end
   #end
-
-  def default_inbound_action
-    Puppet.debug "default_inbound_action: Property hash is #{@property_hash}"
-  end
 
   def exists?
     Puppet.debug "Inside exists? and property hash is: #{@property_hash}"
