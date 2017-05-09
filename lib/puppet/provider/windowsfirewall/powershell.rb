@@ -32,7 +32,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     'allow_local_ipsec_rules'             => 'AllowLocalIPsecRules',
     'allow_user_apps'                     => 'AllowUserApps',
     'allow_user_ports'                    => 'AllowUserPorts',
-    'allow_unicast_response_to_multicast' => 'AllowUnicastResponseToMulticast'
+    'allow_unicast_response_to_multicast' => 'AllowUnicastResponseToMulticast',
     'notify_on_listen'                    => 'NotifyOnListen',
     'enable_stealth_mode_for_ipsec'       => 'EnableStealthModeForIPsec',
     'log_file_name'                       => 'LogFileName',
