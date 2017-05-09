@@ -19,6 +19,8 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     Does very Windows-firewall-y stuff
   EOT
 
+  mk_resource_methods
+
   def initialize(value={})
     super(value)
     @property_flush = {}
@@ -84,10 +86,10 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
 
   # Dynamically create methods from the method_map above
   method_map.each do |key,val|
-    define_method(key) do
-      Puppet.debug "Property hash: #{@property_hash}"
-      @property_hash[key.intern]
-    end
+    #define_method(key) do
+    #  Puppet.debug "Property hash: #{@property_hash}"
+    #  @property_hash[key.intern]
+    #end
 
     define_method("#{key}=") do |value|
       Puppet.debug "Setting @property_flush[#{key.intern}] to #{value}..."
