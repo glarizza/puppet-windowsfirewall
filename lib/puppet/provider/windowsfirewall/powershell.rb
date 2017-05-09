@@ -97,8 +97,8 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def exists?
-    Puppet.debug "We are in exists? and the property hash is: #{@property_hash}"
-    @property_hash[:ensure] == :present
+    enabled = powershell("(Get-NetFirewallProfile -profile \"#{resource[:name]}\").Enabled")
+    enabled.delete("\n").strip == 'True'
   end
 
   def create
