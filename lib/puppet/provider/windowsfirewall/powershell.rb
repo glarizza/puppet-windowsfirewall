@@ -52,7 +52,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def exists?
-    enabled = powershell "(Get-NetFirewallProfile -profile \"#{resource[:name]}\").Enabled"
+    enabled = powershell("(Get-NetFirewallProfile -profile \"#{resource[:name]}\").Enabled")
     enabled.delete("\n").strip == 'True' ? true : false
   end
 
@@ -62,7 +62,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     args << '-DefaultInboundAction' << "\"#{resource[:default_inbound_action]}\"" if resource[:default_inbound_action]
     args << '-DefaultOutboundAction' << "\"#{resource[:default_outbound_action]}\"" if resource[:default_outbound_action]
     args << '-NotifyOnListen' << "\"#{resource[:notify_on_listen]}\"" if resource[:notify_on_listen]
-    Puppet.debug "Ready to CREATE resource with: with command: `#{powershell} #{args}`"
+    Puppet.debug "Ready to CREATE resource with: with command: `powershell.exe #{args}`"
     powershell args unless args.empty?
   end
 
