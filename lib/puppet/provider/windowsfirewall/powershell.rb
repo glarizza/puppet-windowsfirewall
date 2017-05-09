@@ -80,6 +80,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     hash_of_properties[:name] = zone
     hash_of_properties[:ensure] = hash_of_properties[:ensure] == 'True' ? :present : :absent
     hash_of_properties[:provider] = :powershell
+    Puppet.debug "Hash of properties is: #{hash_of_properties}"
     hash_of_properties
   end
 
