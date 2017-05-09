@@ -94,6 +94,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
 
   def flush
     args = []
+    Puppet.debug "The value of @property_flush is: #{@property_flush}"
     unless @property_flush.empty?
       args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
       args << "-#{@method_map['default_inbound_action']}" << "\"#{@property_flush[:default_inbound_action]}\"" if @property_flush[:default_inbound_action]
