@@ -51,13 +51,13 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   def self.instances
     array_of_instances = ['domain', 'private', 'public'].collect do |zone|
       instance_properties = get_firewall_properties(zone)
+      Puppet.debug "Instances:  properties are: #{instance_properties)}"
       new(instance_properties)
     end
     array_of_instances
   end
 
   def self.prefetch(resources)
-    Puppet.debug "-----WE ARE INSIDE PREFETCH------"
     instances.each do |prov|
       if resource = resources[prov.name]
         resource.provider = prov
@@ -77,7 +77,6 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     hash_of_properties[:name] = zone
     hash_of_properties[:ensure] = hash_of_properties[:ensure] == 'True' ? :present : :absent
     hash_of_properties[:provider] = :powershell
-    Puppet.debug "The hash for this zone is: #{hash_of_properties}"
     hash_of_properties
   end
 
