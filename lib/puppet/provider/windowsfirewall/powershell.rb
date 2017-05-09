@@ -60,7 +60,8 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   def self.prefetch(resources)
     sites = instances
     resources.keys.each do |site|
-      if provider = sites.find { |s| s.name == site }
+      if provider = sites.find { |s| s.name.downcase == site.downcase }
+        Puppet.debug "-----FOUND IT------"
         resources[site].provider = provider
       end
     end
