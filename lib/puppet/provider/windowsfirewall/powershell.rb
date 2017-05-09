@@ -19,6 +19,8 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     Does very Windows-firewall-y stuff
   EOT
 
+  mk_resource_methods
+
   def initialize(value={})
     super(value)
     @property_flush = {}
