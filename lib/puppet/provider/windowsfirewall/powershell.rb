@@ -106,27 +106,28 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
       Puppet.fail "Windowsfirewall resource (powershell provider) is unable to build necessary arguments for Powershell."
     end
 
-    Puppet.debug "------The value in build_arguments_for_powershell is: #{value}"
-    args = []
-    args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
-    args << "-#{method_map['default_inbound_action']}" << "\"#{value[:default_inbound_action]}\"" if value[:default_inbound_action]
-    args << "-#{method_map['default_outbound_action']}" << "\"#{value[:default_outbound_action]}\"" if value[:default_outbound_action]
-    args << "-#{method_map['allow_inbound_rules']}" << "\"#{value[:allow_inbound_rules]}\"" if value[:allow_inbound_rules]
-    args << "-#{method_map['allow_local_firewall_rules']}" << "\"#{value[:allow_local_firewall_rules]}\"" if value[:allow_local_firewall_rules]
-    args << "-#{method_map['allow_local_ipsec_rules']}" << "\"#{value[:allow_local_ipsec_rules]}\"" if value[:allow_local_ipsec_rules]
-    args << "-#{method_map['allow_user_apps']}" << "\"#{value[:allow_user_apps]}\"" if value[:allow_user_apps]
-    args << "-#{method_map['allow_user_ports']}" << "\"#{value[:allow_user_ports]}\"" if value[:allow_user_ports]
-    args << "-#{method_map['allow_unicast_response_to_multicast']}" << "\"#{value[:allow_unicast_response_to_multicast]}\"" if value[:allow_unicast_response_to_multicast]
-    args << "-#{method_map['notify_on_listen']}" << "\"#{value[:notify_on_listen]}\"" if value[:notify_on_listen]
-    args << "-#{method_map['enable_stealth_mode_for_ipsec']}" << "\"#{value[:enable_stealth_mode_for_ipsec]}\"" if value[:enable_stealth_mode_for_ipsec]
-    args << "-#{method_map['log_file_name']}" << "\"#{value[:log_file_name]}\"" if value[:log_file_name]
-    args << "-#{method_map['log_max_size_kilobytes']}" << "\"#{value[:log_max_size_kilobytes]}\"" if value[:log_max_size_kilobytes]
-    args << "-#{method_map['log_allowed']}" << "\"#{value[:log_allowed]}\"" if value[:log_allowed]
-    args << "-#{method_map['log_blocked']}" << "\"#{value[:log_blocked]}\"" if value[:log_blocked]
-    args << "-#{method_map['log_ignored']}" << "\"#{value[:log_ignored]}\"" if value[:log_ignored]
-    args << "-#{method_map['disabled_interface_aliases']}" << "\"#{value[:disabled_interface_aliases]}\"" if value[:disabled_interface_aliases]
-    Puppet.debug "Arguments built for windowsfirewall powershell provider returns: #{args}"
-    args
+    unless value.empty?
+      args = []
+      args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
+      args << "-#{method_map['default_inbound_action']}" << "\"#{value[:default_inbound_action]}\"" if value[:default_inbound_action]
+      args << "-#{method_map['default_outbound_action']}" << "\"#{value[:default_outbound_action]}\"" if value[:default_outbound_action]
+      args << "-#{method_map['allow_inbound_rules']}" << "\"#{value[:allow_inbound_rules]}\"" if value[:allow_inbound_rules]
+      args << "-#{method_map['allow_local_firewall_rules']}" << "\"#{value[:allow_local_firewall_rules]}\"" if value[:allow_local_firewall_rules]
+      args << "-#{method_map['allow_local_ipsec_rules']}" << "\"#{value[:allow_local_ipsec_rules]}\"" if value[:allow_local_ipsec_rules]
+      args << "-#{method_map['allow_user_apps']}" << "\"#{value[:allow_user_apps]}\"" if value[:allow_user_apps]
+      args << "-#{method_map['allow_user_ports']}" << "\"#{value[:allow_user_ports]}\"" if value[:allow_user_ports]
+      args << "-#{method_map['allow_unicast_response_to_multicast']}" << "\"#{value[:allow_unicast_response_to_multicast]}\"" if value[:allow_unicast_response_to_multicast]
+      args << "-#{method_map['notify_on_listen']}" << "\"#{value[:notify_on_listen]}\"" if value[:notify_on_listen]
+      args << "-#{method_map['enable_stealth_mode_for_ipsec']}" << "\"#{value[:enable_stealth_mode_for_ipsec]}\"" if value[:enable_stealth_mode_for_ipsec]
+      args << "-#{method_map['log_file_name']}" << "\"#{value[:log_file_name]}\"" if value[:log_file_name]
+      args << "-#{method_map['log_max_size_kilobytes']}" << "\"#{value[:log_max_size_kilobytes]}\"" if value[:log_max_size_kilobytes]
+      args << "-#{method_map['log_allowed']}" << "\"#{value[:log_allowed]}\"" if value[:log_allowed]
+      args << "-#{method_map['log_blocked']}" << "\"#{value[:log_blocked]}\"" if value[:log_blocked]
+      args << "-#{method_map['log_ignored']}" << "\"#{value[:log_ignored]}\"" if value[:log_ignored]
+      args << "-#{method_map['disabled_interface_aliases']}" << "\"#{value[:disabled_interface_aliases]}\"" if value[:disabled_interface_aliases]
+      Puppet.debug "Arguments built for windowsfirewall powershell provider returns: #{args}"
+      args
+    end
   end
 
   def create
