@@ -8,6 +8,9 @@ Puppet::Type.newtype(:windowsfirewall) do
     munge do |value|
       value.downcase.intern
     end
+    def insync?(is)
+      is.downcase == should.downcase
+    end
   end
 
   newproperty(:default_inbound_action) do

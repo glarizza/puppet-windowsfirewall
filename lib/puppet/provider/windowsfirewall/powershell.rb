@@ -93,7 +93,6 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def exists?
-    Puppet.debug "----Property hash found is: #{@property_hash}"
     @property_hash[:ensure] == :present
   end
 
