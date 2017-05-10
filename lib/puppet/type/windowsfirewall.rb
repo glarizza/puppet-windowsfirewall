@@ -9,7 +9,7 @@ Puppet::Type.newtype(:windowsfirewall) do
       value.downcase.intern
     end
     def insync?(is)
-      is.downcase == should.downcase
+      is.downcase.intern == should.downcase.intern
     end
   end
 
