@@ -43,10 +43,10 @@ Puppet::Type.newtype(:windowsfirewall) do
   newproperty(:allow_local_firewall_rules) do
     desc "Allow local firewall rules"
     munge do |value|
-      value.downcase
+      value.to_s.capitalize
     end
     def insync?(is)
-      is.downcase == should.downcase
+      is.capitalize == should.capitalize
     end
   end
 

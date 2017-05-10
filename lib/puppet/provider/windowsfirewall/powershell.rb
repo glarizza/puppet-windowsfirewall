@@ -16,7 +16,14 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     end
 
   desc <<-EOT
-    Does very Windows-firewall-y stuff
+    Manages the three Windows Firewall zones ('domain', 'public', and 'private')
+    with Powershell. See the following declaration:
+
+        windowsfirewall { 'domain':
+          ensure                     => present,
+          allow_inbound_rules        => 'True',
+          allow_local_firewall_rules => 'True'
+        }
   EOT
 
   mk_resource_methods
