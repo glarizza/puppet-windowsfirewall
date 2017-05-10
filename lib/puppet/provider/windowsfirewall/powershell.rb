@@ -59,12 +59,6 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
 
   def self.prefetch(resources)
     instances.each do |prov|
-      # This is different from most prefetch methods I've written specifically
-      # because during the search through all resources in the catalog in the
-      # line below, it was not matching the resources discovered with
-      # self.instances. The reason being that the title was a symbol and NOT
-      # a string. To remedy that I've added ".intern", but I need to be wary
-      # that this might be a bug in another place and NOT here.
       if resource = resources[prov.name]
         resource.provider = prov
       end
@@ -80,7 +74,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
       property_name = method_map.key(key.strip)
       hash_of_properties[property_name.intern] = val.strip.chomp
     end
-    hash_of_properties[:name] = zone
+    hash_of_properties[:name] = zone.intern
     hash_of_properties[:ensure] = hash_of_properties[:ensure] == 'True' ? :present : :absent
     hash_of_properties[:provider] = :powershell
     Puppet.debug "Windowsfirewall found this hash of properties on the system: #{hash_of_properties}"

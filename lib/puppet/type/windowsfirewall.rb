@@ -6,10 +6,7 @@ Puppet::Type.newtype(:windowsfirewall) do
     newvalues(:domain, :public, :private)
     desc "Windows firewall zones - either 'domain', 'public', or 'private'"
     munge do |value|
-      value.downcase
-    end
-    def insync?(is)
-      is.downcase == should.downcase
+      value.downcase.intern
     end
   end
 
