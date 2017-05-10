@@ -13,30 +13,30 @@ Puppet::Type.newtype(:windowsfirewall) do
   newproperty(:default_inbound_action) do
     desc "Default inbound rules for the zone"
     munge do |value|
-      value.downcase
+      value.capitalize
     end
     def insync?(is)
-      is.downcase == should.downcase
+      is.capitalize == should.capitalize
     end
   end
 
   newproperty(:default_outbound_action) do
     desc "Default outbound rules for the zone"
     munge do |value|
-      value.downcase
+      value.capitalize
     end
     def insync?(is)
-      is.downcase == should.downcase
+      is.capitalize == should.capitalize
     end
   end
 
   newproperty(:allow_inbound_rules) do
     desc "Allow inbound rules"
     munge do |value|
-      value.downcase
+      value.to_s.capitalize
     end
     def insync?(is)
-      is.downcase == should.downcase
+      is.capitalize == should.capitalize
     end
   end
 
@@ -53,60 +53,60 @@ Puppet::Type.newtype(:windowsfirewall) do
   newproperty(:allow_local_ipsec_rules) do
     desc "Allow local IPsec rules"
     munge do |value|
-      value.downcase
+      value.to_s.capitalize
     end
     def insync?(is)
-      is.downcase == should.downcase
+      is.capitalize == should.capitalize
     end
   end
 
   newproperty(:allow_user_apps) do
     desc "Allow user apps"
     munge do |value|
-      value.downcase
+      value.to_s.capitalize
     end
     def insync?(is)
-      is.downcase == should.downcase
+      is.capitalize == should.capitalize
     end
   end
 
   newproperty(:allow_user_ports) do
     desc "Allow user ports"
     munge do |value|
-      value.downcase
+      value.to_s.capitalize
     end
     def insync?(is)
-      is.downcase == should.downcase
+      is.capitalize == should.capitalize
     end
   end
 
   newproperty(:allow_unicast_response_to_multicast) do
     desc "Allow unicast response to multicast"
     munge do |value|
-      value.downcase
+      value.to_s.capitalize
     end
     def insync?(is)
-      is.downcase == should.downcase
+      is.capitalize == should.capitalize
     end
   end
 
   newproperty(:notify_on_listen) do
     desc "Notify on listen"
     munge do |value|
-      value.downcase
+      value.to_s.capitalize
     end
     def insync?(is)
-      is.downcase == should.downcase
+      is.capitalize == should.capitalize
     end
   end
 
   newproperty(:enable_stealth_mode_for_ipsec) do
     desc "Enable stealth mode for IPsec"
     munge do |value|
-      value.downcase
+      value.to_s.capitalize
     end
     def insync?(is)
-      is.downcase == should.downcase
+      is.capitalize == should.capitalize
     end
   end
 
@@ -123,40 +123,40 @@ Puppet::Type.newtype(:windowsfirewall) do
   newproperty(:log_max_size_kilobytes) do
     desc "Log max size - in kilobytes"
     munge do |value|
-      value.downcase
+      Integer(value)
     end
     def insync?(is)
-      is.downcase == should.downcase
+      Integer(is) == Integer(should)
     end
   end
 
   newproperty(:log_allowed) do
     desc "Log allowed"
     munge do |value|
-      value.downcase
+      value.to_s.capitalize
     end
     def insync?(is)
-      is.downcase == should.downcase
+      is.capitalize == should.capitalize
     end
   end
 
   newproperty(:log_blocked) do
     desc "Log blocked"
     munge do |value|
-      value.downcase
+      value.to_s.capitalize
     end
     def insync?(is)
-      is.downcase == should.downcase
+      is.capitalize == should.capitalize
     end
   end
 
   newproperty(:log_ignored) do
     desc "Log ignored"
     munge do |value|
-      value.downcase
+      value.to_s.capitalize
     end
     def insync?(is)
-      is.downcase == should.downcase
+      is.capitalize == should.capitalize
     end
   end
 
