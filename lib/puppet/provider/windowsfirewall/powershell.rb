@@ -112,7 +112,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     end
 
     args = []
-    args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{value[:name]}\"" << '-Enabled' << 'True'
+    args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
     args << "-#{method_map['default_inbound_action']}" << "\"#{value[:default_inbound_action]}\"" if value[:default_inbound_action]
     args << "-#{method_map['default_outbound_action']}" << "\"#{value[:default_outbound_action]}\"" if value[:default_outbound_action]
     args << "-#{method_map['allow_inbound_rules']}" << "\"#{value[:allow_inbound_rules]}\"" if value[:allow_inbound_rules]
