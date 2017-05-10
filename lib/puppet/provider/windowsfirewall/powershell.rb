@@ -107,6 +107,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     end
 
     if value
+      Puppet.debug "---The contents of value are: #{value} and the method was #{from_which_method}"
       args = []
       args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
       args << "-#{method_map['default_inbound_action']}" << "\"#{value[:default_inbound_action]}\"" if value[:default_inbound_action]
