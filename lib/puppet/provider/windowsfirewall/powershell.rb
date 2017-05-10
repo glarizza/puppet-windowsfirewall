@@ -102,11 +102,12 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
       value = resource
     when 'flush'
       value = @property_flush
+      args_skip = true if value.empty?
     else
       Puppet.fail "Windowsfirewall resource (powershell provider) is unable to build necessary arguments for Powershell."
     end
 
-    if value
+    unless args_skip
       Puppet.debug "---The contents of value are: #{value} and the method was #{from_which_method}"
       args = []
       args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
