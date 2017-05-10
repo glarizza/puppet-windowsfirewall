@@ -80,12 +80,10 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
       property_name = method_map.key(key.strip)
       hash_of_properties[property_name.intern] = val.strip.chomp
     end
-    Puppet.debug "Hash of properties before setting: #{hash_of_properties}"
     hash_of_properties[:name] = zone
     hash_of_properties[:ensure] = hash_of_properties[:ensure] == 'True' ? :present : :absent
     hash_of_properties[:provider] = :powershell
-    Puppet.debug "Found this hash of properties: #{hash_of_properties}"
-    Puppet.debug "Name is: #{hash_of_properties[:name]} and it is a #{hash_of_properties[:name].class}"
+    Puppet.debug "Windowsfirewall found this hash of properties on the system: #{hash_of_properties}"
     hash_of_properties
   end
 
@@ -101,7 +99,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def exists?
-    Puppet.debug "Property hash found is: #{@property_hash}"
+    Puppet.debug "----Property hash found is: #{@property_hash}"
     @property_hash[:ensure] == :present
   end
 
