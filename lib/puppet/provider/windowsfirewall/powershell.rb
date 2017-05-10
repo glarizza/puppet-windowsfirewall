@@ -106,7 +106,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
       Puppet.fail "Windowsfirewall resource (powershell provider) is unable to build necessary arguments for Powershell."
     end
 
-    unless value.empty?
+    if value
       args = []
       args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
       args << "-#{method_map['default_inbound_action']}" << "\"#{value[:default_inbound_action]}\"" if value[:default_inbound_action]
