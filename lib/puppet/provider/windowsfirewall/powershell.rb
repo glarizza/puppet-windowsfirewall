@@ -97,6 +97,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def build_arguments_for_powershell(from_which_method)
+    args = []
     case from_which_method
     when 'create'
       value = resource
@@ -109,7 +110,6 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
 
     unless args_skip
       Puppet.debug "---The contents of value are: #{value} and the method was #{from_which_method}"
-      args = []
       args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
       args << "-#{method_map['default_inbound_action']}" << "\"#{value[:default_inbound_action]}\"" if value[:default_inbound_action]
       args << "-#{method_map['default_outbound_action']}" << "\"#{value[:default_outbound_action]}\"" if value[:default_outbound_action]
@@ -128,8 +128,8 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
       args << "-#{method_map['log_ignored']}" << "\"#{value[:log_ignored]}\"" if value[:log_ignored]
       args << "-#{method_map['disabled_interface_aliases']}" << "\"#{value[:disabled_interface_aliases]}\"" if value[:disabled_interface_aliases]
       Puppet.debug "Arguments built for windowsfirewall powershell provider returns: #{args}"
-      args
     end
+    args
   end
 
   def create
