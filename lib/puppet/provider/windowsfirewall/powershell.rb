@@ -17,13 +17,22 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
 
   desc <<-EOT
     Manages the three Windows Firewall zones ('domain', 'public', and 'private')
-    with Powershell. See the following declaration:
+    with Powershell. See the following declaration with a sample of some of
+    properties managed:
 
         windowsfirewall { 'domain':
           ensure                     => present,
           allow_inbound_rules        => 'True',
-          allow_local_firewall_rules => 'True'
+          allow_local_firewall_rules => 'True',
+          allow_local_ipsec_rules    => 'True',
+          default_inbound_action     => 'Block',
+          default_outbound_action    => 'Allow',
+          log_file_name              => '%SYSTEMROOT%\System32\LogFiles\Firewall\domainfw.log',
+          log_max_size_kilobytes     => 16384,
         }
+
+    Do note that this provider allows for `puppet resource windowsfirewall`
+    to discover currently-set values on the system.
   EOT
 
   mk_resource_methods
@@ -77,12 +86,12 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     3.times { output.shift }
     hash_of_properties = {}
     output.each do | line|
-      key, val = line.split(':')
+      key, val      = line.split(':')
       property_name = method_map.key(key.strip)
       hash_of_properties[property_name.intern] = val.strip.chomp
     end
-    hash_of_properties[:name] = zone
-    hash_of_properties[:ensure] = hash_of_properties[:ensure] == 'True' ? :present : :absent
+    hash_of_properties[:name]     = zone
+    hash_of_properties[:ensure]   = hash_of_properties[:ensure] == 'True' ? :present : :absent
     hash_of_properties[:provider] = :powershell
     Puppet.debug "Windowsfirewall found this hash of properties on the system: #{hash_of_properties}"
     hash_of_properties
