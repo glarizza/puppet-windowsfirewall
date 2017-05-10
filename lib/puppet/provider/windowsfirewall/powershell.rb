@@ -108,8 +108,13 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
       Puppet.fail "Windowsfirewall resource (powershell provider) is unable to build necessary arguments for Powershell."
     end
 
+    # In the event that the resource is absent and Puppet calls the create
+    # method, there's still going to be a flush call at the end of the run.
+    # The 'args_skip' variable is there to catch this case as well as any case
+    # where @property_flush ends up being empty when flush is called. Without
+    # this conditional, a second redundant Powershell call is invoked with the
+    # first line of arguments since there's no conditional around it
     unless args_skip
-      Puppet.debug "---The contents of value are: #{value} and the method was #{from_which_method}"
       args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
       args << "-#{method_map['default_inbound_action']}" << "\"#{value[:default_inbound_action]}\"" if value[:default_inbound_action]
       args << "-#{method_map['default_outbound_action']}" << "\"#{value[:default_outbound_action]}\"" if value[:default_outbound_action]
