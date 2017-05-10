@@ -83,6 +83,8 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     hash_of_properties[:name] = zone
     hash_of_properties[:ensure] = hash_of_properties[:ensure] == 'True' ? :present : :absent
     hash_of_properties[:provider] = :powershell
+    Puppet.debug "Found this hash of properties: #{hash_of_properties}"
+    Puppet.debug "Name is: #{hash_of_properties[:name]} and it is a #{hash_of_properties[:name].class}"
     hash_of_properties
   end
 
@@ -129,7 +131,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     args << "-#{method_map['log_blocked']}" << "\"#{value[:log_blocked]}\"" if value[:log_blocked]
     args << "-#{method_map['log_ignored']}" << "\"#{value[:log_ignored]}\"" if value[:log_ignored]
     args << "-#{method_map['disabled_interface_aliases']}" << "\"#{value[:disabled_interface_aliases]}\"" if value[:disabled_interface_aliases]
-    Puppet.debug "Arguments built for powershell returns: #{args}"
+    Puppet.debug "Arguments built for windowsfirewall powershell provider returns: #{args}"
     args
   end
 
