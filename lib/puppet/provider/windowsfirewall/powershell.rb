@@ -74,7 +74,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
       property_name = method_map.key(key.strip)
       hash_of_properties[property_name.intern] = val.strip.chomp
     end
-    hash_of_properties[:name] = zone.intern
+    hash_of_properties[:name] = zone
     hash_of_properties[:ensure] = hash_of_properties[:ensure] == 'True' ? :present : :absent
     hash_of_properties[:provider] = :powershell
     Puppet.debug "Windowsfirewall found this hash of properties on the system: #{hash_of_properties}"
