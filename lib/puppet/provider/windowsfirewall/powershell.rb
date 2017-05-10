@@ -65,7 +65,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
       # self.instances. The reason being that the title was a symbol and NOT
       # a string. To remedy that I've added ".intern", but I need to be wary
       # that this might be a bug in another place and NOT here.
-      if resource = resources[prov.name.intern]
+      if resource = resources[prov.name]
         resource.provider = prov
       end
     end
