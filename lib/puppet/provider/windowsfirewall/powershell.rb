@@ -59,6 +59,12 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
 
   def self.prefetch(resources)
     instances.each do |prov|
+      # This is different from most prefetch methods I've written specifically
+      # because during the search through all resources in the catalog in the
+      # line below, it was not matching the resources discovered with
+      # self.instances. The reason being that the title was a symbol and NOT
+      # a string. To remedy that I've added ".intern", but I need to be wary
+      # that this might be a bug in another place and NOT here.
       if resource = resources[prov.name.intern]
         resource.provider = prov
       end
@@ -84,42 +90,51 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     self.class.method_map
   end
 
-  ## Dynamically create methods from the method_map above
-  #method_map.each do |key,val|
-  #  define_method(key) do
-  #    Puppet.debug "Inside getter - property hash is: #{@property_hash}"
-  #    @property_hash[key.intern]
-  #  end
-
-  #  define_method("#{key}=") do |value|
-  #    Puppet.debug "Setting @property_flush[#{key.intern}] to #{value}..."
-  #    @property_flush[key.intern] = value
-  #  end
-  #end
+  # Dynamically create setter methods from the method_map above
+  method_map.keys.each do |key|
+    define_method("#{key}=") do |value|
+      @property_flush[key.intern] = value
+    end
+  end
 
   def exists?
     @property_hash[:ensure] == :present
   end
 
-  def create
+  def build_arguments_for_powershell(from_which_method)
+    case from_which_method
+    when 'create'
+      value = resource
+    when 'flush'
+      value = @property_flush
+    else
+      Puppet.fail "Windowsfirewall resource (powershell provider) is unable to build necessary arguments for Powershell."
+    end
+
     args = []
-    args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
-    args << "-#{method_map['default_inbound_action']}" << "\"#{resource[:default_inbound_action]}\"" if resource[:default_inbound_action]
-    args << "-#{method_map['default_outbound_action']}" << "\"#{resource[:default_outbound_action]}\"" if resource[:default_outbound_action]
-    args << "-#{method_map['allow_inbound_rules']}" << "\"#{resource[:allow_inbound_rules]}\"" if resource[:allow_inbound_rules]
-    args << "-#{method_map['allow_local_firewall_rules']}" << "\"#{resource[:allow_local_firewall_rules]}\"" if resource[:allow_local_firewall_rules]
-    args << "-#{method_map['allow_local_ipsec_rules']}" << "\"#{resource[:allow_local_ipsec_rules]}\"" if resource[:allow_local_ipsec_rules]
-    args << "-#{method_map['allow_user_apps']}" << "\"#{resource[:allow_user_apps]}\"" if resource[:allow_user_apps]
-    args << "-#{method_map['allow_user_ports']}" << "\"#{resource[:allow_user_ports]}\"" if resource[:allow_user_ports]
-    args << "-#{method_map['allow_unicast_response_to_multicast']}" << "\"#{resource[:allow_unicast_response_to_multicast]}\"" if resource[:allow_unicast_response_to_multicast]
-    args << "-#{method_map['notify_on_listen']}" << "\"#{resource[:notify_on_listen]}\"" if resource[:notify_on_listen]
-    args << "-#{method_map['enable_stealth_mode_for_ipsec']}" << "\"#{resource[:enable_stealth_mode_for_ipsec]}\"" if resource[:enable_stealth_mode_for_ipsec]
-    args << "-#{method_map['log_file_name']}" << "\"#{resource[:log_file_name]}\"" if resource[:log_file_name]
-    args << "-#{method_map['log_max_size_kilobytes']}" << "\"#{resource[:log_max_size_kilobytes]}\"" if resource[:log_max_size_kilobytes]
-    args << "-#{method_map['log_allowed']}" << "\"#{resource[:log_allowed]}\"" if resource[:log_allowed]
-    args << "-#{method_map['log_blocked']}" << "\"#{resource[:log_blocked]}\"" if resource[:log_blocked]
-    args << "-#{method_map['log_ignored']}" << "\"#{resource[:log_ignored]}\"" if resource[:log_ignored]
-    args << "-#{method_map['disabled_interface_aliases']}" << "\"#{resource[:disabled_interface_aliases]}\"" if resource[:disabled_interface_aliases]
+    args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{value[:name]}\"" << '-Enabled' << 'True'
+    args << "-#{method_map['default_inbound_action']}" << "\"#{value[:default_inbound_action]}\"" if value[:default_inbound_action]
+    args << "-#{method_map['default_outbound_action']}" << "\"#{value[:default_outbound_action]}\"" if value[:default_outbound_action]
+    args << "-#{method_map['allow_inbound_rules']}" << "\"#{value[:allow_inbound_rules]}\"" if value[:allow_inbound_rules]
+    args << "-#{method_map['allow_local_firewall_rules']}" << "\"#{value[:allow_local_firewall_rules]}\"" if value[:allow_local_firewall_rules]
+    args << "-#{method_map['allow_local_ipsec_rules']}" << "\"#{value[:allow_local_ipsec_rules]}\"" if value[:allow_local_ipsec_rules]
+    args << "-#{method_map['allow_user_apps']}" << "\"#{value[:allow_user_apps]}\"" if value[:allow_user_apps]
+    args << "-#{method_map['allow_user_ports']}" << "\"#{value[:allow_user_ports]}\"" if value[:allow_user_ports]
+    args << "-#{method_map['allow_unicast_response_to_multicast']}" << "\"#{value[:allow_unicast_response_to_multicast]}\"" if value[:allow_unicast_response_to_multicast]
+    args << "-#{method_map['notify_on_listen']}" << "\"#{value[:notify_on_listen]}\"" if value[:notify_on_listen]
+    args << "-#{method_map['enable_stealth_mode_for_ipsec']}" << "\"#{value[:enable_stealth_mode_for_ipsec]}\"" if value[:enable_stealth_mode_for_ipsec]
+    args << "-#{method_map['log_file_name']}" << "\"#{value[:log_file_name]}\"" if value[:log_file_name]
+    args << "-#{method_map['log_max_size_kilobytes']}" << "\"#{value[:log_max_size_kilobytes]}\"" if value[:log_max_size_kilobytes]
+    args << "-#{method_map['log_allowed']}" << "\"#{value[:log_allowed]}\"" if value[:log_allowed]
+    args << "-#{method_map['log_blocked']}" << "\"#{value[:log_blocked]}\"" if value[:log_blocked]
+    args << "-#{method_map['log_ignored']}" << "\"#{value[:log_ignored]}\"" if value[:log_ignored]
+    args << "-#{method_map['disabled_interface_aliases']}" << "\"#{value[:disabled_interface_aliases]}\"" if value[:disabled_interface_aliases]
+    Puppet.debug "Arguments built for powershell returns: #{args}"
+    args
+  end
+
+  def create
+    args = build_arguments_for_powershell('create')
     powershell(args) unless args.empty?
   end
 
@@ -130,26 +145,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   end
 
   def flush
-    args = []
-    unless @property_flush.empty?
-      args << 'Set-NetFirewallProfile' << '-Profile' << "\"#{resource[:name]}\"" << '-Enabled' << 'True'
-      args << "-#{method_map['default_inbound_action']}" << "\"#{@property_flush[:default_inbound_action]}\"" if @property_flush[:default_inbound_action]
-      args << "-#{method_map['default_outbound_action']}" << "\"#{@property_flush[:default_outbound_action]}\"" if @property_flush[:default_outbound_action]
-      args << "-#{method_map['allow_inbound_rules']}" << "\"#{@property_flush[:allow_inbound_rules]}\"" if @property_flush[:allow_inbound_rules]
-      args << "-#{method_map['allow_local_firewall_rules']}" << "\"#{@property_flush[:allow_local_firewall_rules]}\"" if @property_flush[:allow_local_firewall_rules]
-      args << "-#{method_map['allow_local_ipsec_rules']}" << "\"#{@property_flush[:allow_local_ipsec_rules]}\"" if @property_flush[:allow_local_ipsec_rules]
-      args << "-#{method_map['allow_user_apps']}" << "\"#{@property_flush[:allow_user_apps]}\"" if @property_flush[:allow_user_apps]
-      args << "-#{method_map['allow_user_ports']}" << "\"#{@property_flush[:allow_user_ports]}\"" if @property_flush[:allow_user_ports]
-      args << "-#{method_map['allow_unicast_response_to_multicast']}" << "\"#{@property_flush[:allow_unicast_response_to_multicast]}\"" if @property_flush[:allow_unicast_response_to_multicast]
-      args << "-#{method_map['notify_on_listen']}" << "\"#{@property_flush[:notify_on_listen]}\"" if @property_flush[:notify_on_listen]
-      args << "-#{method_map['enable_stealth_mode_for_ipsec']}" << "\"#{@property_flush[:enable_stealth_mode_for_ipsec]}\"" if @property_flush[:enable_stealth_mode_for_ipsec]
-      args << "-#{method_map['log_file_name']}" << "\"#{@property_flush[:log_file_name]}\"" if @property_flush[:log_file_name]
-      args << "-#{method_map['log_max_size_kilobytes']}" << "\"#{@property_flush[:log_max_size_kilobytes]}\"" if @property_flush[:log_max_size_kilobytes]
-      args << "-#{method_map['log_allowed']}" << "\"#{@property_flush[:log_allowed]}\"" if @property_flush[:log_allowed]
-      args << "-#{method_map['log_blocked']}" << "\"#{@property_flush[:log_blocked]}\"" if @property_flush[:log_blocked]
-      args << "-#{method_map['log_ignored']}" << "\"#{@property_flush[:log_ignored]}\"" if @property_flush[:log_ignored]
-      args << "-#{method_map['disabled_interface_aliases']}" << "\"#{@property_flush[:disabled_interface_aliases]}\"" if @property_flush[:disabled_interface_aliases]
-    end
+    args = build_arguments_for_powershell('flush')
     powershell(args) unless args.empty?
   end
 end
