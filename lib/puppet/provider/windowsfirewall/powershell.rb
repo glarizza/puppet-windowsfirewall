@@ -1,9 +1,5 @@
 Puppet::Type.type(:windowsfirewall).provide(:powershell) do
   confine :operatingsystem => :windows
-  confine :kernelmajorversion do |kernelversion|
-    kernelversion >= 6.2
-  end
-
   commands :powershell =>
     if File.exists?("#{ENV['SYSTEMROOT']}\\sysnative\\WindowsPowershell\\v1.0\\powershell.exe")
       "#{ENV['SYSTEMROOT']}\\sysnative\\WindowsPowershell\\v1.0\\powershell.exe"
