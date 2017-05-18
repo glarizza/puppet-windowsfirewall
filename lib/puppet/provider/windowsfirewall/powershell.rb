@@ -88,6 +88,7 @@ Puppet::Type.type(:windowsfirewall).provide(:powershell) do
     output.each do | line|
       key, val      = line.split(':')
       property_name = method_map.key(key.strip)
+      next if property_name.nil?
       hash_of_properties[property_name.intern] = val.strip.chomp
     end
     hash_of_properties[:name]     = zone
